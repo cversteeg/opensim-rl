@@ -1,10 +1,9 @@
 import os
-from osim.env import Arm2DEnv
+from osim.env import Arm3DEnvMoBL
 import pprint
 import numpy as np
 
-env = Arm2DEnv()
-#print(Arm2DEnv.__file__)
+env = Arm3DEnvMoBL()
 if __name__ == '__main__':
     observation = env.reset()
     print(env.osim_model.list_elements())

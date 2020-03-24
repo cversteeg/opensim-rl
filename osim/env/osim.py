@@ -37,7 +37,7 @@ class OsimModel(object):
     maxforces = []
     curforces = []
 
-    def __init__(self, model_path, visualize, integrator_accuracy = 5e-5):
+    def __init__(self, model_path, visualize, integrator_accuracy = 5e-10):
         self.integrator_accuracy = integrator_accuracy
         self.model = opensim.Model(model_path)
         self.model_state = self.model.initSystem()
