@@ -7,9 +7,9 @@ import opensim
 import random
 from .osim import OsimEnv
 
-class Arm3DEnvMoBL(OsimEnv):
-    model_path = os.path.join(os.path.dirname(__file__), '../models/MoBL_ARMS_J_Simple_032118.osim')    
-    time_limit = 400
+class Arm3DEnvMonk(OsimEnv):
+    model_path = os.path.join(os.path.dirname(__file__), '../models/monkeyArm_current.osim')    
+    time_limit = 200
     target_x = 0
     target_y = 0
 
@@ -44,38 +44,32 @@ class Arm3DEnvMoBL(OsimEnv):
         return 50 #46
 
     def generate_new_target(self):
-        theta = random.uniform(-1*math.pi*2/3, math.pi*2/3)
-        phi = random.uniform(-1*math.pi/2, math.pi/2)
+        theta = random.uniform(math.pi*0, math.pi*2/3)
         radius = random.uniform(0.3, 0.65)
-        self.target_x = radius*math.sin(theta)*math.cos(phi)+2
-        self.target_y = radius*math.sin(theta)*math.sin(phi) + 0.8
-        self.target_z = radius*math.cos(theta)
+        self.target_x = math.cos(theta) * radius 
+        self.target_y = -math.sin(theta) * radius
 
         print('\ntarget: [{} {}]'.format(self.target_x, self.target_y))
 
         state = self.osim_model.get_state()
 
 #        self.target_joint.getCoordinate(0).setValue(state, self.target_x, False)
-        self.target_joint.getCoordinate(1).setValue(state, self.target_z, False)
+        self.target_joint.getCoordinate(1).setValue(state, self.target_x, False)
 
         self.target_joint.getCoordinate(2).setLocked(state, False)
         self.target_joint.getCoordinate(2).setValue(state, self.target_y, False)
         self.target_joint.getCoordinate(2).setLocked(state, True)
-        
-        self.target_joint.getCoordinate(0).setLocked(state, False)
-        self.target_joint.getCoordinate(0).setValue(state, self.target_x, False)
-        self.target_joint.getCoordinate(0).setValue(state, True)
         self.osim_model.set_state(state)
         
     def reset(self, random_target=True, obs_as_dict=True):
-        obs = super(Arm3DEnvMoBL, self).reset(obs_as_dict=obs_as_dict)
+        obs = super(Arm3DEnvMonk, self).reset(obs_as_dict=obs_as_dict)
         if random_target:
             self.generate_new_target()
         self.osim_model.reset_manager()
         return obs
 
     def __init__(self, *args, **kwargs):
-        super(Arm3DEnvMoBL, self).__init__(*args, **kwargs)
+        super(Arm3DEnvMonk, self).__init__(*args, **kwargs)
         blockos = opensim.Body('target', 0.0001 , opensim.Vec3(0), opensim.Inertia(1,1,.0001,0,0,0) );
         self.target_joint = opensim.PlanarJoint('target-joint',
                                   self.osim_model.model.getGround(), # PhysicalFrame
@@ -98,9 +92,7 @@ class Arm3DEnvMoBL(OsimEnv):
     
     def reward(self):
         state_desc = self.get_state_desc()
-        penalty = (state_desc["markers"]["Handle"]["pos"][0] - self.target_x)**2 + (state_desc["markers"]["Handle"]["pos"][1] - self.target_y)**2 +(state_desc["markers"]["Handle"]["pos"][2] - self.target_z)**2
-        # vec2Targ = -1*[(state_desc["markers"]["Handle"]["pos"][0] - self.target_x), (state_desc["markers"]["Handle"]["pos"][1] - self.target_y)]
-        # penaltyVel = (state_desc["markers"]["Handle"]["vel"][0],  state_desc["markers"]["Handle"]["vel"][1])
+        penalty = (state_desc["markers"]["Handle"]["pos"][0] - self.target_x)**2 + (state_desc["markers"]["Handle"]["pos"][1] - self.target_y)**2
         act_pen = 0
         count = 0
         for muscle in ["DELT1", "SUBSC", "TMAJ", "PECM2", "CORB", "TRIlong", "TRIlat", "BIClong", "BICshort", "BRA"]:
@@ -114,22 +106,22 @@ class Arm3DEnvMoBL(OsimEnv):
         act_pen = act_pen/count
         if np.isnan(penalty):
             penalty = 1
-        return 1.-penalty
+        return 1.-penalty -.5*act_pen
 
     def get_reward(self):
         return self.reward()
 
 
-class Arm3DVecEnv(Arm3DEnvMoBL):
+class Arm3DVecMonkEnv(Arm3DEnvMonk):
     def reset(self, obs_as_dict=False):
-        obs = super(Arm3DVecEnv, self).reset(obs_as_dict=obs_as_dict)
+        obs = super(Arm3DVecMonkEnv, self).reset(obs_as_dict=obs_as_dict)
         if np.isnan(obs).any():
             obs = np.nan_to_num(obs)
         return obs
     def step(self, action, obs_as_dict=False):
         if np.isnan(action).any():
             action = np.nan_to_num(action)
-        obs, reward, done, info = super(Arm3DVecEnv, self).step(.1*action, obs_as_dict=obs_as_dict)
+        obs, reward, done, info = super(Arm3DVecMonkEnv, self).step(action, obs_as_dict=obs_as_dict)
         if np.isnan(obs).any():
             obs = np.nan_to_num(obs)
             done = True

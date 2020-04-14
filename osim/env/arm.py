@@ -92,6 +92,7 @@ class Arm2DEnv(OsimEnv):
     
     def reward(self):
         state_desc = self.get_state_desc()
+        print('Working')
         penalty = (state_desc["markers"]["r_radius_styloid"]["pos"][0] - self.target_x)**2 + (state_desc["markers"]["r_radius_styloid"]["pos"][1] - self.target_y)**2
         # print(state_desc["markers"]["r_radius_styloid"]["pos"])
         # print((self.target_x, self.target_y))

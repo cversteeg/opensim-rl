@@ -2,9 +2,9 @@
 import numpy as np
 import sys
 
-from keras.models import Sequential, Model
-from keras.layers import Dense, Activation, Flatten, Input, concatenate
-from keras.optimizers import Adam
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Dense, Activation, Flatten, Input, concatenate
+from tensorflow.keras.optimizers import Adam
 
 import numpy as np
 
@@ -15,10 +15,12 @@ from rl.random import OrnsteinUhlenbeckProcess
 from osim.env import *
 from osim.http.client import Client
 
-from keras.optimizers import RMSprop
+from tensorflow.keras.optimizers import RMSprop
 
 import argparse
 import math
+import tensorflow as tf
+tf.compat.v1.enable_eager_execution()
 
 # Command line parameters
 parser = argparse.ArgumentParser(description='Train or test neural net motor controller')
@@ -31,7 +33,7 @@ parser.add_argument('--token', dest='token', action='store', required=False)
 args = parser.parse_args()
 
 # Load walking environment
-env = Arm2DEnv(args.visualize)
+env = L2M2019Env(args.visualize)
 env.reset()
 
 nb_actions = env.action_space.shape[0]

@@ -164,11 +164,24 @@
 		<length_units>meters</length_units>
 		<force_units>N</force_units>
 		<!--Acceleration due to gravity.-->
-		<gravity> 0 -9.80665 0</gravity>
+		<!--<gravity> 0 -9.80665 0</gravity>-->
+		<gravity> 0 0 0</gravity>
 		<!--Bodies in the model.-->
 		<BodySet>
 			<objects>
 				<Body name="ground">
+					<mass>0</mass>
+					<mass_center> 0 0 0</mass_center>
+					<inertia_xx>0</inertia_xx>
+					<inertia_yy>0</inertia_yy>
+					<inertia_zz>0</inertia_zz>
+					<inertia_xy>0</inertia_xy>
+					<inertia_xz>0</inertia_xz>
+					<inertia_yz>0</inertia_yz>
+					<!--Joint that connects this body with the parent body.-->
+					<Joint />
+				</Body>			
+				<Body name="base">
 					<mass>0</mass>
 					<mass_center> 0 0 0</mass_center>
 					<inertia_xx>1</inertia_xx>
@@ -178,7 +191,27 @@
 					<inertia_xz>0</inertia_xz>
 					<inertia_yz>0</inertia_yz>
 					<!--Joint that connects this body with the parent body.-->
-					<Joint />
+					<Joint>
+						<WeldJoint name="offset">
+							<!--Name of the parent body to which this joint connects its owner body.-->
+							<parent_body>ground</parent_body>
+							<!--Location of the joint in the parent body specified in the parent reference frame. Default is (0,0,0).-->
+							<location_in_parent>0 0.8 0</location_in_parent>
+							<!--Orientation of the joint in the parent body specified in the parent reference frame. Euler XYZ body-fixed rotation angles are used to express the orientation. Default is (0,0,0).-->
+							<orientation_in_parent>0 0 0</orientation_in_parent>
+							<!--Location of the joint in the child body specified in the child reference frame. For SIMM models, this vector is always the zero vector (i.e., the body reference frame coincides with the joint). -->
+							<location>0 0 0</location>
+							<!--Orientation of the joint in the owing body specified in the owning body reference frame. Euler XYZ body-fixed rotation angles are used to express the orientation. -->
+							<orientation>0 0 0</orientation>
+							<!--Set holding the generalized coordinates (q's) that parmeterize this joint.-->
+							<CoordinateSet>
+								<objects />
+								<groups />
+							</CoordinateSet>
+							<!--Whether the joint transform defines parent->child or child->parent.-->
+							<reverse>false</reverse>
+						</WeldJoint>
+					</Joint>
 					<VisibleObject>
 						<!--Set of geometry files and associated attributes, allow .vtp, .stl, .obj-->
 						<GeometrySet>
@@ -254,7 +287,7 @@
 					<Joint>
 						<CustomJoint name="sternoclavicular">
 							<!--Name of the parent body to which this joint connects its owner body.-->
-							<parent_body>ground</parent_body>
+							<parent_body>base</parent_body>
 							<!--Location of the joint in the parent body specified in the parent reference frame. Default is (0,0,0).-->
 							<location_in_parent>0.006325 0.00693 0.025465</location_in_parent>
 							<!--Orientation of the joint in the parent body specified in the parent reference frame. Euler XYZ body-fixed rotation angles are used to express the orientation. Default is (0,0,0).-->
@@ -1128,9 +1161,9 @@
 										<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 										<default_speed_value>0</default_speed_value>
 										<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-										<range>-1.57079633 2.26892803</range>
+										<range>-1.57079633 1.74533</range>
 										<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
-										<clamped>false</clamped>
+										<clamped>true</clamped>
 										<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
 										<locked>false</locked>
 										<!--If specified, the coordinate can be prescribed by a function of time. It can be any OpenSim Function with valid second order derivatives.-->
@@ -5913,7 +5946,7 @@
 								</MovingPathPoint>
 								<MovingPathPoint name="default">
 									<location> 0.0085293 -0.0125531 0.124234</location>
-									<body>ground</body>
+									<body>base</body>
 									<x_location>
 										<PiecewiseLinearFunction>
 											<x> 0 3.14159</x>
@@ -6058,7 +6091,7 @@
 								</MovingPathPoint>
 								<MovingPathPoint name="default">
 									<location> 0.0207161 -0.0238355 0.117539</location>
-									<body>ground</body>
+									<body>base</body>
 									<x_location>
 										<PiecewiseLinearFunction>
 											<x> 0 3.14159</x>
@@ -6083,11 +6116,11 @@
 								</MovingPathPoint>
 								<PathPoint name="PECM2-P4">
 									<location> 0.03091 -0.03922 0.09705</location>
-									<body>ground</body>
+									<body>base</body>
 								</PathPoint>
 								<PathPoint name="PECM2-P5">
 									<location> 0.02769 -0.04498 0.02271</location>
-									<body>ground</body>
+									<body>base</body>
 								</PathPoint>
 							</objects>
 							<groups />
@@ -6212,7 +6245,7 @@
 								</MovingPathPoint>
 								<MovingPathPoint name="default">
 									<location> 0.02984 -0.0707123 0.1151</location>
-									<body>ground</body>
+									<body>base</body>
 									<x_location>
 										<PiecewiseLinearFunction>
 											<x> 0 3.14159</x>
@@ -6237,11 +6270,11 @@
 								</MovingPathPoint>
 								<PathPoint name="PECM3-P4">
 									<location> 0.0525 -0.08417 0.08935</location>
-									<body>ground</body>
+									<body>base</body>
 								</PathPoint>
 								<PathPoint name="PECM3-P5">
 									<location> 0.05724 -0.11654 0.03787</location>
-									<body>ground</body>
+									<body>base</body>
 								</PathPoint>
 							</objects>
 							<groups />
@@ -6386,11 +6419,11 @@
 								</MovingPathPoint>
 								<PathPoint name="LAT1-P4">
 									<location> -0.11828 -0.10118 0.03316</location>
-									<body>ground</body>
+									<body>base</body>
 								</PathPoint>
 								<PathPoint name="LAT1-P5">
 									<location> -0.09578 -0.11724 0.00882</location>
-									<body>ground</body>
+									<body>base</body>
 								</PathPoint>
 							</objects>
 							<groups />
@@ -6535,11 +6568,11 @@
 								</MovingPathPoint>
 								<PathPoint name="LAT2-P4">
 									<location> -0.10992 -0.16908 0.02878</location>
-									<body>ground</body>
+									<body>base</body>
 								</PathPoint>
 								<PathPoint name="LAT2-P5">
 									<location> -0.07186 -0.18818 0.00815</location>
-									<body>ground</body>
+									<body>base</body>
 								</PathPoint>
 							</objects>
 							<groups />
@@ -6684,11 +6717,11 @@
 								</MovingPathPoint>
 								<PathPoint name="LAT3-P4">
 									<location> -0.11157 -0.19387 0.05532</location>
-									<body>ground</body>
+									<body>base</body>
 								</PathPoint>
 								<PathPoint name="LAT3-P5">
 									<location> -0.07117 -0.24858 0.00907</location>
-									<body>ground</body>
+									<body>base</body>
 								</PathPoint>
 							</objects>
 							<groups />
@@ -11004,7 +11037,7 @@
 				</Marker>
 				<Marker name="C7">
 					<!--Body segment in the model on which the marker resides.-->
-					<body>ground</body>
+					<body>base</body>
 					<!--Location of a marker on the body segment.-->
 					<location> -0.05613 0.05528 -0.00151</location>
 					<!--Flag (true or false) specifying whether or not a marker should be kept fixed in the marker placement step.  i.e. If false, the marker is allowed to move.-->
