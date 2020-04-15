@@ -231,6 +231,7 @@ class OsimModel(object):
     def reset_manager(self):
         self.manager = opensim.Manager(self.model)
         self.manager.setIntegratorAccuracy(self.integrator_accuracy)
+        self.manager.setUseConstantDT(True)
         self.manager.initialize(self.state)
 
     def reset(self):
