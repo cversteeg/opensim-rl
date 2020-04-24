@@ -37,8 +37,8 @@ class OsimModel(object):
     maxforces = []
     curforces = []
 
-    def __init__(self, model_path, visualize, integrator_accuracy = 5e-3):
-        print(integrator_accuracy)
+    def __init__(self, model_path, visualize, integrator_accuracy = 5e-8):
+
         self.integrator_accuracy = integrator_accuracy
         self.model = opensim.Model(model_path)
         self.model_state = self.model.initSystem()
@@ -230,8 +230,8 @@ class OsimModel(object):
 
     def reset_manager(self):
         self.manager = opensim.Manager(self.model)
+        integ = self.manager.getIntegrator()
         self.manager.setIntegratorAccuracy(self.integrator_accuracy)
-        self.manager.setUseConstantDT(True)
         self.manager.initialize(self.state)
 
     def reset(self):
@@ -291,7 +291,7 @@ class OsimEnv(gym.Env):
     def is_done(self):
         return False
 
-    def __init__(self, visualize = True, integrator_accuracy = 5e-3):
+    def __init__(self, visualize = True, integrator_accuracy = 5e-8):
         self.visualize = visualize
         self.integrator_accuracy = integrator_accuracy
         self.load_model()

@@ -45,13 +45,15 @@ class Arm3DEnvMoBL(OsimEnv):
         return 51 #46
 
     def generate_new_target(self):
-        theta = random.uniform(-1*math.pi*1/2, math.pi*1/2)
-        phi = random.uniform(-1*math.pi, math.pi)
+        theta = random.uniform(0, math.pi)
+        phi = random.uniform(-1*math.pi/2, math.pi/2)
         radius = random.uniform(0.3, 0.5)
+        
         self.target_x = radius*math.sin(theta)*math.cos(phi)
         self.target_y = radius*math.sin(theta)*math.sin(phi) + 0.8
         self.target_z = radius*math.cos(theta)
 
+        print('\nangeles: [{} {}]'.format(theta, phi))
         print('\ntarget: [{} {} {}]'.format(self.target_x, self.target_y, self.target_z))
 
         state = self.osim_model.get_state()
@@ -66,14 +68,11 @@ class Arm3DEnvMoBL(OsimEnv):
         self.target_joint.getCoordinate(4).setValue(state, self.target_y, False)
         self.target_joint.getCoordinate(4).setLocked(state, True)
         
-        print(self.target_joint.getCoordinate(0).getValue(state))
-        
         self.target_joint.getCoordinate(5).setLocked(state, False)
         self.target_joint.getCoordinate(5).setValue(state, self.target_z, False)
         self.target_joint.getCoordinate(5).setLocked(state, True)
         
-        print(self.target_joint.getCoordinate(0).getValue(state))
-
+      
         
         self.osim_model.set_state(state)
         
